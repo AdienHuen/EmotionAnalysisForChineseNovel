@@ -11,19 +11,21 @@ class EmotionAnalysis():
     """
     情感分析
     """
-
+    segment_model_path = '/home/adien/ltp_data/cws.model'  # ltp分词模型
+    pos_model_path = '/home/adien/ltp_data/pos.model'  # ltp词性标注模型
+    parser_model_path = '/home/adien/ltp_data/parser.model'  # ltp依存句法解析模型
     def __init__(self,book = "西游记白话文"):
         self.emotion_dict = read_dict()
         self.book = book  # 书名
         self.chapter_num = get_files_num(path="Book/"+book)  # 章节数
         self.segmentor = Segmentor()  # 分词器
-        self.segmentor.load('/home/adien/ltp_data/cws.model')
+        self.segmentor.load(self.segment_model_path)
         self.postagger = Postagger()  # 词性标注器
-        self.postagger.load('/home/adien/ltp_data/pos.model')
+        self.postagger.load()
         self.recognizer=NamedEntityRecognizer()
-        self.recognizer.load('/home/adien/ltp_data/ner.model')
-        self.parser = Parser()
-        self.parser.load('/home/adien/ltp_data/parser.model')
+        self.recognizer.load(self.pos_model_path)
+        self.parser = Parser()  # 句法分析模型
+        self.parser.load(self.parser_model_path)
         self.positive_num,self.negative_num = self.count_dict_num()  # 正向词和负向词的个数
 
     def count_dict_num(self):
@@ -171,6 +173,7 @@ class EmotionAnalysis():
         for i in range(len(role_points)):
             print roles[i], role_points[i]
         return roles, role_points
+
 ea = EmotionAnalysis()
 contents = ea.get_chapterList()
 for i in range(len(contents)):
